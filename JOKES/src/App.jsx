@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import JokeCard from "./components/JokeCard.jsx";
-import Joke from "./components/Joke.jsx"
+import Joke from "./components/Joke.jsx";
 import Category from "./components/Category.jsx";
 
 function App() {
-  const [currentJoke, setcurrentJoke] = useState([]);
+  const [currentJoke, setcurrentJoke] = useState("");
   const [savedJoke, setsavedJoke] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -34,19 +34,23 @@ function App() {
   };
 
   const removeJoke = (id) => {
-    setsavedJoke(savedJoke.filter((j) => j.id !== id));
+    if (window.confirm("Are you sure you want to delete this joke?")) {
+      setsavedJoke(savedJoke.filter((j) => j.id !== id));
+    }
   };
   useEffect(() => {
     getJoke();
   }, []);
+
+  const isSaved=savedJoke.some((j)=>j.id===currentJoke?.id)
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 px-4">
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-800">
         RANDOM JOKES
       </h1>
-      
-      <Joke getJoke={getJoke} saveJoke={saveJoke} currentJoke={currentJoke}/>
+
+      <Joke getJoke={getJoke} saveJoke={saveJoke} currentJoke={currentJoke}loading={loading} isSaved={isSaved}/>
 
       {/* Multiple Jokes */}
       {/* {currentJoke.map(joke => (
@@ -55,7 +59,6 @@ function App() {
 
       {/* Category */}
       {/* <Category getJoke={getJoke} /> */}
-
 
       {loading && <p className="text-gray-600 mb-4">Loading joke...</p>}
       {error && <p className="text-red-600 mb-4">{error}</p>}
@@ -77,5 +80,4 @@ function App() {
     </div>
   );
 }
-
 export default App;
